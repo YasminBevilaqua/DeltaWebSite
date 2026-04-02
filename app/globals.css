@@ -164,6 +164,8 @@ main {
     width: 100%;
     top: 0;
     z-index: 1002;
+    /* Deixa o ponteiro atravessar a faixa do header para o mega menu (z-index menor) ao mover do link ao painel */
+    pointer-events: none;
     /* Fix para iOS - estabiliza header fixo durante scroll */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -181,6 +183,7 @@ main {
 
 .navbar {
     padding: 0.5rem 0;
+    pointer-events: auto;
 }
 
 .navbar .container {

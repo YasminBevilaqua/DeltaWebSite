@@ -25,10 +25,14 @@ export default function NossasSolucoes() {
     setMounted(true);
   }, []);
 
-  // No mobile: menu só abre por clique (hover desabilitado)
+  // No mobile: menu só abre por clique (hover desabilitado). Desktop: abertura só via CSS :hover (sem estado React).
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)');
-    const update = () => setIsMobile(mq.matches);
+    const update = () => {
+      const next = mq.matches;
+      setIsMobile(next);
+      if (!next) setIsFloatingMenuOpen(false);
+    };
     update();
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
@@ -746,16 +750,17 @@ export default function NossasSolucoes() {
           <div
             ref={menuRef}
             className={`floating-nav-menu ${isFloatingMenuOpen ? 'expanded' : ''} ${isMobile ? 'floating-nav-menu-mobile' : ''}`}
-            onMouseEnter={!isMobile ? () => setIsFloatingMenuOpen(true) : undefined}
-            onMouseLeave={!isMobile ? () => setIsFloatingMenuOpen(false) : undefined}
           >
             {/* Botão principal com efeito 3D e brilho rotativo */}
             <button
               type="button"
               className="floating-nav-trigger"
-              onClick={() => setIsFloatingMenuOpen((o) => !o)}
-              aria-label={isFloatingMenuOpen ? 'Fechar menu de seções' : 'Abrir menu de seções'}
-              aria-expanded={isFloatingMenuOpen}
+              onClick={() => {
+                if (isMobile) setIsFloatingMenuOpen((o) => !o);
+              }}
+              aria-label={isMobile ? (isFloatingMenuOpen ? 'Fechar menu de seções' : 'Abrir menu de seções') : 'Menu de navegação das soluções'}
+              aria-expanded={isMobile ? isFloatingMenuOpen : undefined}
+              aria-haspopup="true"
             >
               <div className="floating-nav-trigger-glow"></div>
               <div className="floating-nav-trigger-inner">
@@ -1344,8 +1349,18 @@ export default function NossasSolucoes() {
           display: flex;
           flex-direction: column;
           align-items: flex-end;
-          filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+          /* Sem filter no wrapper: drop-shadow no pai costuma piorar hit-testing / :hover */
           font-family: 'Quicksand', sans-serif;
+          box-sizing: border-box;
+        }
+
+        /* Com o painel fechado o wrapper tem altura 0 — só o botão conta para hit-testing.
+           :hover no pai inclui o botão; padding inferior cria ponte até o dropdown abrir. */
+        @media (min-width: 769px) {
+          .floating-nav-menu:not(.floating-nav-menu-mobile):hover,
+          .floating-nav-menu:not(.floating-nav-menu-mobile).expanded {
+            padding-bottom: 40px;
+          }
         }
 
         /* Botão principal com design 3D */
@@ -1364,6 +1379,7 @@ export default function NossasSolucoes() {
           overflow: hidden;
           transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
           box-shadow:
+            0 10px 28px -6px rgba(0, 0, 0, 0.55),
             0 10px 20px -8px rgba(0, 0, 0, 0.6),
             0 0 0 1px rgba(16, 219, 255, 0.2) inset,
             0 0 20px rgba(16, 219, 255, 0.2);
@@ -1371,8 +1387,9 @@ export default function NossasSolucoes() {
           transform: perspective(400px) rotateX(2deg) rotateY(-2deg);
         }
 
+        /* Sem translateY no hover: mover o botão fazia o cursor “sair” do retângulo e reabrir/fechar o menu */
         .floating-nav-trigger:hover {
-          transform: perspective(400px) rotateX(0deg) rotateY(0deg) translateY(-2px);
+          transform: perspective(400px) rotateX(0deg) rotateY(0deg);
           border-color: rgba(16, 219, 255, 0.8);
           box-shadow:
             0 15px 30px -10px rgba(0, 0, 0, 0.7),
@@ -1412,8 +1429,8 @@ export default function NossasSolucoes() {
         }
 
         @keyframes iconPulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.1); }
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.75; }
         }
 
         .floating-nav-icon svg {
@@ -1432,22 +1449,36 @@ export default function NossasSolucoes() {
           text-shadow: 0 0 10px #10dbff;
         }
 
-        /* Wrapper do dropdown */
+        /* Wrapper do dropdown — padding-top (não margin) evita zona morta entre o botão e o painel (mouseLeave no container) */
         .floating-nav-dropdown-wrapper {
           max-height: 0;
           opacity: 0;
           overflow: hidden;
-          margin-top: 16px;
+          margin-top: 0;
+          padding-top: 16px;
+          box-sizing: border-box;
           transform: translateY(-20px) scale(0.95);
           transform-origin: top right;
           transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
           width: 380px;
         }
 
-        .floating-nav-menu.expanded .floating-nav-dropdown-wrapper {
-          max-height: 700px;
-          opacity: 1;
-          transform: translateY(0) scale(1);
+        /* Desktop: abre só com CSS :hover — evita loop de mouseEnter/mouseLeave com estado React */
+        @media (min-width: 769px) {
+          .floating-nav-menu:not(.floating-nav-menu-mobile):hover .floating-nav-dropdown-wrapper {
+            max-height: 700px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        /* Mobile: painel só com classe .expanded (clique) */
+        @media (max-width: 768px) {
+          .floating-nav-menu.expanded .floating-nav-dropdown-wrapper {
+            max-height: 700px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
 
         /* Dropdown principal */
@@ -1767,7 +1798,9 @@ export default function NossasSolucoes() {
 
           .floating-nav-menu.floating-nav-menu-mobile .floating-nav-dropdown-wrapper {
             margin-top: 0;
-            margin-bottom: 12px;
+            padding-top: 0;
+            padding-bottom: 12px;
+            margin-bottom: 0;
             transform: translateY(20px) scale(0.95);
             transform-origin: bottom right;
           }

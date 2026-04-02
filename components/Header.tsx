@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigation } from '@/contexts/NavigationContext';
 
 export default function Header() {
@@ -10,6 +10,48 @@ export default function Header() {
   const [isMegaMenuServicosOpen, setIsMegaMenuServicosOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const { activeSection, setActiveSection } = useNavigation();
+
+  const megaMenuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const megaMenuServicosCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelMegaSolucoesCloseTimer = () => {
+    if (megaMenuCloseTimerRef.current) {
+      clearTimeout(megaMenuCloseTimerRef.current);
+      megaMenuCloseTimerRef.current = null;
+    }
+  };
+
+  const cancelMegaServicosCloseTimer = () => {
+    if (megaMenuServicosCloseTimerRef.current) {
+      clearTimeout(megaMenuServicosCloseTimerRef.current);
+      megaMenuServicosCloseTimerRef.current = null;
+    }
+  };
+
+  const cancelAllMegaCloseTimers = () => {
+    cancelMegaSolucoesCloseTimer();
+    cancelMegaServicosCloseTimer();
+  };
+
+  const scheduleCloseMegaSolucoes = () => {
+    cancelMegaSolucoesCloseTimer();
+    megaMenuCloseTimerRef.current = setTimeout(() => {
+      setIsMegaMenuOpen(false);
+      megaMenuCloseTimerRef.current = null;
+    }, 240);
+  };
+
+  const scheduleCloseMegaServicos = () => {
+    cancelMegaServicosCloseTimer();
+    megaMenuServicosCloseTimerRef.current = setTimeout(() => {
+      setIsMegaMenuServicosOpen(false);
+      megaMenuServicosCloseTimerRef.current = null;
+    }, 240);
+  };
+
+  useEffect(() => {
+    return () => cancelAllMegaCloseTimers();
+  }, []);
 
   useEffect(() => {
     // Detecta o modo escuro/claro do sistema
@@ -79,6 +121,7 @@ export default function Header() {
     e.preventDefault();
     setActiveSection('inicio');
     setIsMenuOpen(false);
+    cancelAllMegaCloseTimers();
     setIsMegaMenuOpen(false);
     setIsMegaMenuServicosOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -87,6 +130,7 @@ export default function Header() {
   const handleMegaMenuNavigation = (e: React.MouseEvent<HTMLDivElement>, sectionId: string, subsectionId?: string) => {
     e.preventDefault();
     setActiveSection(sectionId as any);
+    cancelAllMegaCloseTimers();
     setIsMegaMenuOpen(false);
     setIsMegaMenuServicosOpen(false);
     
@@ -198,6 +242,7 @@ export default function Header() {
                   key={item.href}
                   className={item.sectionId === 'nossas-solucoes' || item.sectionId === 'servicos' ? 'has-mega-menu' : ''}
                   onMouseEnter={() => {
+                    cancelAllMegaCloseTimers();
                     if (item.sectionId === 'nossas-solucoes') {
                       setIsMegaMenuServicosOpen(false);
                       setIsMegaMenuOpen(true);
@@ -243,8 +288,11 @@ export default function Header() {
               activeSection === 'contato' ? 'mega-menu-contato' : 
               'mega-menu-other'
             }`}
-            onMouseEnter={() => setIsMegaMenuOpen(true)}
-            onMouseLeave={() => setIsMegaMenuOpen(false)}
+            onMouseEnter={() => {
+              cancelMegaSolucoesCloseTimer();
+              setIsMegaMenuOpen(true);
+            }}
+            onMouseLeave={scheduleCloseMegaSolucoes}
           >
             <div className="mega-menu-content">
               <div className="mega-menu-column">
@@ -279,8 +327,11 @@ export default function Header() {
               activeSection === 'contato' ? 'mega-menu-contato' : 
               'mega-menu-other'
             }`}
-            onMouseEnter={() => setIsMegaMenuServicosOpen(true)}
-            onMouseLeave={() => setIsMegaMenuServicosOpen(false)}
+            onMouseEnter={() => {
+              cancelMegaServicosCloseTimer();
+              setIsMegaMenuServicosOpen(true);
+            }}
+            onMouseLeave={scheduleCloseMegaServicos}
           >
             <div className="mega-menu-content mega-menu-content-14 mega-menu-4cols">
               {[areasCompetenciaMenu.slice(0, 4), areasCompetenciaMenu.slice(4, 8), areasCompetenciaMenu.slice(8, 11), areasCompetenciaMenu.slice(11, 14)].map((column, colIndex) => (
