@@ -39,7 +39,6 @@ export default function Footer() {
           <div className="footer-section">
             <ul>
               <li><a href="#inicio" onClick={(e) => handleNavigation(e, 'inicio')}>Início</a></li>
-              <li><a href="#sobre" onClick={(e) => handleNavigation(e, 'sobre')}>Sobre</a></li>
               <li><a href="#servicos" onClick={(e) => handleNavigation(e, 'servicos')}>Áreas de Competência</a></li>
               <li><a href="#nossas-solucoes" onClick={(e) => handleNavigation(e, 'nossas-solucoes')}>Nossas Soluções</a></li>
             </ul>
