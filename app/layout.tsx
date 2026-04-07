@@ -1,11 +1,22 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import LoadingScreen from '@/components/LoadingScreen';
-import FaviconHandler from '@/components/FaviconHandler';
 
 export const metadata: Metadata = {
   title: 'Delta Sollutions',
   description: 'Unimos engenharia mecânica, design eletrônico e automação inteligente para entregar soluções completas.',
+  icons: {
+    icon: [
+      {
+        url: '/logos/delta-logo.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/logos/delta-logo2.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -34,7 +45,6 @@ export default function RootLayout({
           </div>
         </div>
         <LoadingScreen />
-        <FaviconHandler />
         {children}
       </body>
     </html>
