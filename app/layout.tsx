@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import FaviconHandler from '@/components/FaviconHandler';
 import LoadingScreen from '@/components/LoadingScreen';
 
 export const metadata: Metadata = {
@@ -17,7 +16,6 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-        <link rel="apple-touch-icon" href="/apple-icon.png" />
         <link 
           rel="stylesheet" 
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -35,7 +33,6 @@ export default function RootLayout({
           </div>
         </div>
         <LoadingScreen />
-        <FaviconHandler />
         {children}
       </body>
     </html>
