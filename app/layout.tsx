@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import LoadingScreen from '@/components/LoadingScreen';
+import FaviconHandler from '@/components/FaviconHandler';
 
 export const metadata: Metadata = {
   title: 'Delta Sollutions',
@@ -33,6 +34,7 @@ export default function RootLayout({
           </div>
         </div>
         <LoadingScreen />
+        <FaviconHandler />
         {children}
       </body>
     </html>
