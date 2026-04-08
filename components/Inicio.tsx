@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import ProximoEvento from './ProximoEvento';
 
 const WHATSAPP_CONSULTORIA_URL =
   'https://api.whatsapp.com/send/?phone=5592984810094&text=Ol%C3%A1%21+Vim+do+site+da+Delta+e+gostaria+da+minha+consultoria+gratuita&type=phone_number&app_absent=0';
@@ -261,7 +262,8 @@ export default function Inicio() {
 
   return (
     <>
-      <section className="hero-clean" id="inicio">
+      <section className="hero-clean" id="inicio" style={{ position: 'relative' }}>
+        <ProximoEvento />
         <div className="hero-background">
           <div className="bg-image-container">
             <img src="/images/robo-1.jpg" alt="Robô industrial Delta Solutions" className="bg-image" />
