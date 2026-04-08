@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import LoadingScreen from '@/components/LoadingScreen';
 
 export const metadata: Metadata = {
   title: 'Delta Sollutions',
@@ -21,19 +20,32 @@ export default function RootLayout({
           rel="stylesheet" 
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
+        <script dangerouslySetInnerHTML={{__html: `
+          (function() {
+            function hideLoading() {
+              const loader = document.getElementById('initial-loading-screen');
+              if (loader) {
+                loader.classList.add('fade-out');
+                setTimeout(function() {
+                  loader.style.display = 'none';
+                }, 500);
+              }
+            }
+            setTimeout(hideLoading, 2000);
+          })();
+        `}} />
       </head>
       <body>
         <div id="initial-loading-screen" className="loading-screen">
           <div className="loading-content">
             <div className="loading-spinner">
-              <div className="spinner-ring" />
-              <div className="spinner-ring" />
-              <div className="spinner-ring" />
+              <div className="spinner-ring"></div>
+              <div className="spinner-ring"></div>
+              <div className="spinner-ring"></div>
             </div>
             <p className="loading-text">carregando...</p>
           </div>
         </div>
-        <LoadingScreen />
         {children}
       </body>
     </html>
