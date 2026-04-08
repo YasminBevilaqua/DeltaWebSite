@@ -1248,15 +1248,7 @@ export default function NossasSolucoes() {
           <div className="feature-item">
             <div className="feature-dot"></div>
             <span>Configurações de pesagem</span>
-          </div>
-          <div className="feature-item">
-            <div className="feature-dot"></div>
-            <span>Relatório diário</span>
-          </div>
-          <div className="feature-item">
-            <div className="feature-dot"></div>
-            <span>Identificações</span>
-          </div>
+          </div>   
         </div>
           <div className="share-solucao-cta">
             <p className="share-solucao-text">Gostou dessa solução? Compartilhe!</p>
