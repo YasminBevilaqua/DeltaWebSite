@@ -14,6 +14,7 @@ export default function Inicio() {
   const heroParticlesContainerRef = useRef<HTMLDivElement>(null);
   const statCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLElement>(null);
+  const carouselTrackRef = useRef<HTMLDivElement>(null);
 
   // Partículas no hero – flutuação rápida + interação com o cursor
   const mousePosRef = useRef({ x: 0, y: 0 });
@@ -259,6 +260,59 @@ export default function Inicio() {
     elements.forEach((el) => observer.observe(el));
     return () => elements.forEach((el) => observer.unobserve(el));
   }, []);
+
+  // Animação do carrossel de logos
+  useEffect(() => {
+    const track = carouselTrackRef.current;
+    if (!track) return;
+    
+    let animationId: number;
+    let scrollPosition = 0;
+    const speed = 0.5; // pixels por frame
+    
+    const animate = () => {
+      if (track) {
+        scrollPosition += speed;
+        if (scrollPosition >= track.scrollWidth / 2) {
+          scrollPosition = 0;
+        }
+        track.style.transform = `translateX(${-scrollPosition}px)`;
+      }
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    animationId = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, []);
+
+  // Array de logos dos parceiros (imagens reais)
+  const logoItems = [
+    { id: 1, url: '/imagens_parceiros/1. instituto conecthus.png', alt: 'Instituto Conecthus' },
+    { id: 2, url: '/imagens_parceiros/2. elgin.png', alt: 'Elgin' },
+    { id: 3, url: '/imagens_parceiros/3. venttos.png', alt: 'Venttos' },
+    { id: 4, url: '/imagens_parceiros/4. belmicro.png', alt: 'Belmicro' },
+    { id: 5, url: '/imagens_parceiros/5. midea.png', alt: 'Midea' },
+    { id: 6, url: '/imagens_parceiros/6. inventus.png', alt: 'Inventus' },
+    { id: 7, url: '/imagens_parceiros/7. harman.png', alt: 'Harman' },
+    { id: 8, url: '/imagens_parceiros/8. eletrolux.png', alt: 'Eletrolux' },
+    { id: 9, url: '/imagens_parceiros/9. panasonic.png', alt: 'Panasonic' },
+    { id: 10, url: '/imagens_parceiros/10. INDT.png', alt: 'INDT' },
+    { id: 11, url: '/imagens_parceiros/11. livoltek.png', alt: 'Livoltek' },
+    { id: 12, url: '/imagens_parceiros/12. whirlpool.png', alt: 'Whirlpool' },
+    { id: 13, url: '/imagens_parceiros/13. carrier.png', alt: 'Carrier' },
+    { id: 14, url: '/imagens_parceiros/14. cal-comp.png', alt: 'Cal-Comp' },
+    { id: 15, url: '/imagens_parceiros/15. universal eletronics.png', alt: 'Universal Electronics' },
+    { id: 16, url: '/imagens_parceiros/16. RLX.png', alt: 'RLX' },
+    { id: 17, url: '/imagens_parceiros/17. gama.png', alt: 'Gama' },
+    { id: 18, url: '/imagens_parceiros/18. hanna-eletronics.png', alt: 'Hanna Electronics' },
+    { id: 19, url: '/imagens_parceiros/19. technos.png', alt: 'Technos' },
+    { id: 20, url: '/imagens_parceiros/20. croc.png', alt: 'Croc' },
+  ];
 
   return (
     <>
@@ -638,6 +692,43 @@ export default function Inicio() {
               </div>
             </div>
           </div>
+
+          {/* SEÇÃO EMPRESAS PARCEIRAS - CARROSSEL DE LOGOS */}
+          <div className="partners-section scroll-reveal">
+            <div className="partners-container">
+              <div className="partners-header">
+                <h3 className="partners-title">
+                  Empresas parceiras que acreditam em nossas <span className="highlight">soluções</span>:
+                </h3>
+                <div className="partners-divider"></div>
+              </div>
+              
+              <div className="carousel-wrapper">
+                <div className="carousel-track" ref={carouselTrackRef}>
+                  {/* Primeiro conjunto de logos */}
+                  {logoItems.map((logo) => (
+                    <div key={`logo-${logo.id}`} className="logo-item">
+                      <div className="logo-card">
+                        <img src={logo.url} alt={logo.alt} className="logo-image" />
+                      </div>
+                    </div>
+                  ))}
+                  {/* Segundo conjunto de logos (duplicado para loop infinito suave) */}
+                  {logoItems.map((logo) => (
+                    <div key={`logo-dup-${logo.id}`} className="logo-item">
+                      <div className="logo-card">
+                        <img src={logo.url} alt={logo.alt} className="logo-image" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Gradientes de fade nas bordas */}
+                <div className="carousel-fade-left"></div>
+                <div className="carousel-fade-right"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <style jsx>{`
@@ -731,6 +822,126 @@ export default function Inicio() {
           @keyframes techFloatInicio {
             0% { transform: translate(0, 0); }
             100% { transform: translate(100px, -100px); }
+          }
+
+          /* =========================================================
+             SEÇÃO EMPRESAS PARCEIRAS - CARROSSEL
+          ========================================================= */
+          .partners-section {
+            position: relative;
+            z-index: 10;
+            margin-top: 40px;
+            padding: 60px 0;
+            width: 100%;
+            overflow: hidden;
+          }
+
+          .partners-container {
+            max-width: 100%;
+            margin: 0 auto;
+          }
+
+          .partners-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+          }
+
+          .partners-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+          }
+
+          .partners-title .highlight {
+            color: #10dbff;
+            font-weight: 800;
+            position: relative;
+          }
+
+          .partners-divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #10dbff, transparent);
+            margin: 0 auto;
+          }
+
+          /* Wrapper do carrossel */
+          .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 20px 0;
+          }
+
+          /* Track que contém os logos */
+          .carousel-track {
+            display: flex;
+            gap: 30px;
+            width: fit-content;
+            will-change: transform;
+          }
+
+          /* Item individual de logo */
+          .logo-item {
+            flex-shrink: 0;
+          }
+
+          /* Card da logo com fundo claro para destacar - AUMENTADO EM 10% */
+          .logo-card {
+            width: 176px;
+            height: 99px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.9) 100%);
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 18px;
+            border: 1px solid rgba(16, 219, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 20px rgba(16, 219, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+          }
+
+          .logo-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(16, 219, 255, 0.5);
+            box-shadow: 0 8px 25px rgba(16, 219, 255, 0.15), 0 0 30px rgba(16, 219, 255, 0.2);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+          }
+
+          .logo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(1) contrast(1.1);
+          }
+
+          /* Fades nas bordas para transição suave */
+          .carousel-fade-left,
+          .carousel-fade-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 150px;
+            pointer-events: none;
+            z-index: 5;
+          }
+
+          .carousel-fade-left {
+            left: 0;
+            background: linear-gradient(to right, #01071A 0%, transparent 100%);
+          }
+
+          .carousel-fade-right {
+            right: 0;
+            background: linear-gradient(to left, #01071A 0%, transparent 100%);
           }
 
           /* =========================================================
@@ -1272,6 +1483,21 @@ export default function Inicio() {
               display: inline;
               text-align: center;
             }
+
+            .partners-title {
+              font-size: 2.24rem;
+            }
+
+            .logo-card {
+              width: 143px;
+              height: 83px;
+              padding: 11px 13px;
+            }
+
+            .carousel-fade-left,
+            .carousel-fade-right {
+              width: 80px;
+            }
           }
 
           @media (max-width: 480px) {
@@ -1331,6 +1557,30 @@ export default function Inicio() {
               padding: 8px 16px;
               width: auto;
               margin: 0 auto;
+            }
+
+            .partners-section {
+              padding: 40px 0;
+            }
+
+            .partners-title {
+              font-size: 1.6rem;
+              padding: 0 10px;
+            }
+
+            .logo-card {
+              width: 121px;
+              height: 72px;
+              padding: 9px 11px;
+            }
+
+            .carousel-track {
+              gap: 20px;
+            }
+
+            .carousel-fade-left,
+            .carousel-fade-right {
+              width: 50px;
             }
           }
 
@@ -1693,7 +1943,8 @@ export default function Inicio() {
           .inicio-content-section .about-section,
           .inicio-content-section .servicos-section,
           .inicio-content-section .tecnologias-section,
-          .inicio-content-section .cta-simple-section {
+          .inicio-content-section .cta-simple-section,
+          .inicio-content-section .partners-section {
             position: relative;
             z-index: 10;
           }
@@ -2316,7 +2567,7 @@ export default function Inicio() {
             }
 
             .tech-info h4 {
-              /* Reserva espaço para títulos de 1–2 linhas sem “pular” alturas */
+              /* Reserva espaço para títulos de 1–2 linhas sem "pular" alturas */
               min-height: 2.6em;
             }
           }
@@ -2697,4 +2948,4 @@ export default function Inicio() {
       </section>
     </>
   );
-}  
+}

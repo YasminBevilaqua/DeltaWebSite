@@ -111,7 +111,7 @@ export default function ProximoEvento() {
             ×
           </button>
           <img
-            src="/eventos/proximo-evento.jpg"
+            src="/imagem_eventos/proximo-evento.jpg"
             alt="Próximo Evento"
             style={{ 
               maxWidth: '90%', 
